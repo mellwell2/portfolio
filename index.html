@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deniz Afsar — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:        #090909;
+      --bg2:       #111111;
+      --bg3:       #181818;
+      --line:      rgba(255,255,255,0.08);
+      --text:      #e8e2d9;
+      --muted:     #7a7570;
+      --accent:    #c8a96e;
+      --accent2:   #8b6b3d;
+      --white:     #ffffff;
+      --font-disp: 'Cormorant Garamond', serif;
+      --font-ui:   'Syne', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ─────────────────────────────── */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(200,169,110,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+    }
+    body:hover .cursor-ring.expanded {
+      width: 56px; height: 56px;
+      border-color: var(--accent);
+    }
+
+    /* ─── GRAIN OVERLAY ─────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.35;
+    }
+
+    /* ─── NAVIGATION ─────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 56px;
+      background: linear-gradient(to bottom, rgba(9,9,9,0.95) 0%, transparent 100%);
+      mix-blend-mode: normal;
+    }
+    .nav-logo {
+      font-family: var(--font-disp);
+      font-size: 20px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    #hero {
+      height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 56px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 80% 20%, rgba(200,169,110,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 20% 80%, rgba(139,107,61,0.05) 0%, transparent 70%),
+        var(--bg);
+    }
+    .hero-line {
+      position: absolute; top: 0; left: 0; bottom: 0;
+      width: 1px; background: var(--line);
+      left: 56px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+    .hero-name {
+      font-family: var(--font-disp);
+      font-size: clamp(72px, 10vw, 148px);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.5s forwards;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-sub {
+      margin-top: 32px;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      max-width: 400px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+    .hero-scroll {
+      position: absolute;
+      right: 56px; bottom: 80px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      opacity: 0; animation: fadeIn 1s ease 1.2s forwards;
+    }
+    .hero-scroll span {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(0.6); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─── SECTION BASE ─────────────────────────────── */
+    section { position: relative; }
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 56px;
+    }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      height: 1px; width: 40px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+    .section-title {
+      font-family: var(--font-disp);
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 48px;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 0;
+    }
+
+    /* ─── ABOUT ─────────────────────────────────────── */
+    #about { background: var(--bg); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-bio {
+      font-family: var(--font-disp);
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+    }
+    .about-bio strong { color: var(--white); font-weight: 400; }
+    .about-details { display: flex; flex-direction: column; gap: 40px; }
+    .detail-group h4 {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .tag-list {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tag {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      border-radius: 2px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── PORTFOLIO ─────────────────────────────────── */
+    #portfolio { background: var(--bg2); }
+    .portfolio-filter {
+      display: flex; gap: 4px;
+      margin-bottom: 48px;
+    }
+    .filter-btn {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      cursor: none;
+      transition: all 0.25s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 240px;
+      gap: 12px;
+    }
+    .p-item {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg3);
+      cursor: none;
+    }
+    /* Layout sizes */
+    .p-item.wide  { grid-column: span 7; }
+    .p-item.mid   { grid-column: span 5; }
+    .p-item.full  { grid-column: span 12; grid-row: span 2; }
+    .p-item.third { grid-column: span 4; }
+
+    .p-item iframe {
+      width: 100%; height: 100%;
+      border: none;
+      display: block;
+      pointer-events: none;
+    }
+    .p-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .p-item:hover img { transform: scale(1.04); }
+    .p-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 24px;
+    }
+    .p-item:hover .p-overlay { opacity: 1; }
+    .p-overlay h3 {
+      font-family: var(--font-disp);
+      font-size: 22px; font-weight: 300;
+      color: var(--white);
+    }
+    .p-overlay span {
+      font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 4px;
+    }
+    /* Video play overlay */
+    .p-play {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .p-play-btn {
+      width: 60px; height: 60px;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .p-play-btn svg { fill: white; width: 20px; height: 20px; margin-left: 4px; }
+    .p-item:hover .p-play-btn {
+      border-color: var(--accent);
+      transform: scale(1.1);
+    }
+    /* Placeholder items */
+    .p-placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; text-align: center;
+      border: 1px dashed rgba(200,169,110,0.2);
+    }
+    .p-placeholder .ph-icon { font-size: 28px; opacity: 0.3; }
+    .p-placeholder .ph-label {
+      font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent); opacity: 0.5;
+    }
+    .p-placeholder .ph-hint {
+      font-size: 11px; color: var(--muted); max-width: 200px; line-height: 1.5;
+    }
+
+    /* ─── LIFE / PHOTOS ─────────────────────────────── */
+    #life { background: var(--bg); }
+    .life-tabs {
+      display: flex; gap: 0;
+      margin-bottom: 48px;
+      border-bottom: 1px solid var(--line);
+    }
+    .life-tab {
+      font-size: 11px; letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      background: none; border: none;
+      color: var(--muted); cursor: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .life-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .life-tab:hover { color: var(--text); }
+
+    .life-panels { position: relative; }
+    .life-panel { display: none; }
+    .life-panel.active { display: block; }
+
+    .photo-mosaic {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .photo-mosaic .ph-tall { grid-row: span 2; }
+    .photo-cell {
+      background: var(--bg3);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+    }
+    .photo-cell.ph-tall { aspect-ratio: unset; }
+    .photo-cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .photo-cell:hover img { transform: scale(1.05); }
+    .photo-cell.placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      border: 1px dashed rgba(200,169,110,0.2);
+      padding: 20px; text-align: center;
+    }
+    .photo-cell.placeholder span { font-size: 28px; opacity: 0.2; }
+    .photo-cell.placeholder p { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+
+    /* ─── CONTACT ─────────────────────────────────────── */
+    #contact { background: var(--bg2); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .contact-left .section-title { margin-bottom: 24px; }
+    .contact-left p {
+      font-family: var(--font-disp);
+      font-size: 18px; font-weight: 300;
+      color: var(--muted); line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 16px; }
+    .contact-link {
+      display: flex; align-items: center; gap: 16px;
+      text-decoration: none; color: var(--text);
+      padding: 20px 24px;
+      border: 1px solid var(--line);
+      transition: border-color 0.3s, background 0.3s;
+      group: true;
+    }
+    .contact-link:hover { border-color: var(--accent); background: rgba(200,169,110,0.04); }
+    .contact-link .cl-icon {
+      width: 40px; height: 40px;
+      border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      flex-shrink: 0;
+    }
+    .contact-link:hover .cl-icon { border-color: var(--accent); }
+    .contact-link .cl-text { display: flex; flex-direction: column; }
+    .contact-link .cl-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .contact-link .cl-value { font-size: 14px; color: var(--text); margin-top: 2px; }
+    .contact-link .cl-arrow {
+      margin-left: auto; color: var(--muted); font-size: 18px;
+      transition: transform 0.3s, color 0.3s;
+    }
+    .contact-link:hover .cl-arrow { transform: translate(4px, -4px); color: var(--accent); }
+
+    .contact-right {
+      display: flex; align-items: center; justify-content: center;
+    }
+    .contact-monogram {
+      font-family: var(--font-disp);
+      font-size: clamp(100px, 14vw, 180px);
+      font-weight: 300;
+      font-style: italic;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,169,110,0.2);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    footer {
+      padding: 32px 56px;
+      border-top: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    footer p {
+      font-size: 11px; letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    footer span { color: var(--accent); }
+
+    /* ─── REVEAL ANIMATIONS ──────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 24px 28px; }
+      .nav-links { display: none; }
+      .section-inner { padding: 80px 28px; }
+      #hero { padding: 0 28px 60px; }
+      .hero-line { left: 28px; }
+      .hero-scroll { right: 28px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .p-item.wide, .p-item.mid, .p-item.third { grid-column: span 1; }
+      .p-item.full { grid-column: span 2; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-right { display: none; }
+      .photo-mosaic { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <a class="nav-logo" href="#hero">Deniz <span>Afsar</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#life">Life</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+    <p class="hero-eyebrow">Video Editor · Content Creator · IB Student</p>
+    <h1 class="hero-name">Deniz<br /><em>Afsar</em></h1>
+    <p class="hero-sub">Crafting visuals that speak — from raw footage to finished story.</p>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── ABOUT ─────────────────────────────────────────── -->
+  <section id="about">
+    <div class="section-inner">
+      <p class="section-label reveal">About me</p>
+      <div class="about-grid">
+        <div class="reveal">
+          <p class="about-bio">
+            I'm a <strong>17-year-old IB Diploma student</strong> based in Barcelona with a deep interest in video production, visual storytelling, and design. Whether I'm on the court for <strong>CB Ribes</strong>, moderating at MUN, or spending 200 hours speaking English at <strong>Pueblo Inglés</strong> — I bring the same energy to everything I do.
+          </p>
+        </div>
+        <div class="about-details reveal">
+          <div class="detail-group">
+            <h4>Tools</h4>
+            <div class="tag-list">
+              <span class="tag">Premiere Pro</span>
+              <span class="tag">After Effects</span>
+              <span class="tag">Photoshop</span>
+            </div>
+          </div>
+          <div class="detail-group">
+            <h4>Languages</h4>
+            <div class="tag-list">
+              <span class="tag">🇺🇸 Native English</span>
+              <span class="tag">🇹🇷 Native Turkish</span>
+              <span class="tag">🇪🇸 B2 Spanish</span>
+            </div>
+          </div>
+          <div class="detail-group">
+            <h4>Education</h4>
+            <div class="tag-list">
+              <span class="tag">IB Diploma — British College of Gavà</span>
+              <span class="tag">iGCSE Eng. Lang. & Lit. — Grade 9</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── PORTFOLIO ──────────────────────────────────────── -->
+  <section id="portfolio">
+    <div class="section-inner">
+      <p class="section-label reveal">Selected Work</p>
+      <h2 class="section-title reveal">Videos &amp; <em>Design</em></h2>
+
+      <div class="portfolio-filter reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="video">Video</button>
+        <button class="filter-btn" data-filter="design">Design</button>
+      </div>
+
+      <div class="portfolio-grid">
+
+        <!--
+          ════════════════════════════════════════════════════════════════
+          HOW TO ADD YOUR WORK:
+          — For a VIDEO:  Replace the <div class="p-placeholder"> with:
+              <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=0&mute=1"
+                      allowfullscreen></iframe>
+              <div class="p-overlay">
+                <span>Video Edit</span>
+                <h3>Your Video Title</h3>
+              </div>
+              <div class="p-play">
+                <div class="p-play-btn">
+                  <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+              </div>
+          — For a PHOTO/DESIGN: Replace with:
+              <img src="https://res.cloudinary.com/YOUR_CLOUD/image/upload/YOUR_IMAGE.jpg" alt="Title" />
+              <div class="p-overlay">
+                <span>Graphic Design</span>
+                <h3>Project Title</h3>
+              </div>
+          ════════════════════════════════════════════════════════════════
+        -->
+
+        <!-- Item 1 — Large video (left) -->
+        <div class="p-item wide" data-type="video">
+          <div class="p-placeholder">
+            <span class="ph-icon">▶</span>
+            <span class="ph-label">Video</span>
+            <p class="ph-hint">Paste your YouTube embed URL here (see comment above)</p>
+          </div>
+          <div class="p-overlay">
+            <span>Video Edit</span>
+            <h3>Your Video Title</h3>
+          </div>
+          <div class="p-play">
+            <div class="p-play-btn">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 2 — Design (right) -->
+        <div class="p-item mid" data-type="design">
+          <div class="p-placeholder">
+            <span class="ph-icon">🎨</span>
+            <span class="ph-label">Design</span>
+            <p class="ph-hint">Upload to Cloudinary and paste the image URL here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Graphic Design</span>
+            <h3>Design Work</h3>
+          </div>
+        </div>
+
+        <!-- Item 3 — Design (left) -->
+        <div class="p-item mid" data-type="design">
+          <div class="p-placeholder">
+            <span class="ph-icon">🎨</span>
+            <span class="ph-label">Design</span>
+            <p class="ph-hint">Cloudinary image URL goes here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Graphic Design</span>
+            <h3>CoinKids Branding</h3>
+          </div>
+        </div>
+
+        <!-- Item 4 — Video (right) -->
+        <div class="p-item wide" data-type="video">
+          <div class="p-placeholder">
+            <span class="ph-icon">▶</span>
+            <span class="ph-label">Video</span>
+            <p class="ph-hint">YouTube embed URL here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Video Edit</span>
+            <h3>Your Video Title</h3>
+          </div>
+          <div class="p-play">
+            <div class="p-play-btn">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 5 — Design -->
+        <div class="p-item third" data-type="design">
+          <div class="p-placeholder">
+            <span class="ph-icon">🎨</span>
+            <span class="ph-label">Design</span>
+            <p class="ph-hint">Image URL here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Graphic Design</span>
+            <h3>Design Work</h3>
+          </div>
+        </div>
+
+        <!-- Item 6 — Video -->
+        <div class="p-item third" data-type="video">
+          <div class="p-placeholder">
+            <span class="ph-icon">▶</span>
+            <span class="ph-label">Video</span>
+            <p class="ph-hint">YouTube embed URL here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Short Film</span>
+            <h3>Your Film Title</h3>
+          </div>
+          <div class="p-play">
+            <div class="p-play-btn">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item 7 — Design -->
+        <div class="p-item third" data-type="design">
+          <div class="p-placeholder">
+            <span class="ph-icon">🎨</span>
+            <span class="ph-label">Design</span>
+            <p class="ph-hint">Image URL here</p>
+          </div>
+          <div class="p-overlay">
+            <span>Graphic Design</span>
+            <h3>Design Work</h3>
+          </div>
+        </div>
+
+      </div><!-- /portfolio-grid -->
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── LIFE ──────────────────────────────────────────── -->
+  <section id="life">
+    <div class="section-inner">
+      <p class="section-label reveal">Beyond the screen</p>
+      <h2 class="section-title reveal">A Life <em>Lived</em></h2>
+
+      <div class="life-tabs reveal">
+        <button class="life-tab active" data-tab="bball">🏀 Basketball</button>
+        <button class="life-tab" data-tab="pueblo">🗣 Pueblo Inglés</button>
+        <button class="life-tab" data-tab="mun">🌍 MUN</button>
+      </div>
+
+      <div class="life-panels">
+
+        <!-- BASKETBALL -->
+        <div class="life-panel active" id="panel-bball">
+          <div class="photo-mosaic">
+            <!--
+              Replace these placeholder divs with:
+              <div class="photo-cell [ph-tall]">
+                <img src="YOUR_CLOUDINARY_URL" alt="Basketball" />
+              </div>
+            -->
+            <div class="photo-cell ph-tall placeholder">
+              <span>🏀</span>
+              <p>Basketball photo — tall format</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🏀</span>
+              <p>Game action shot</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🏀</span>
+              <p>Team photo or training</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🏀</span>
+              <p>Courtside moment</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🏀</span>
+              <p>Another shot</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUEBLO INGLÉS -->
+        <div class="life-panel" id="panel-pueblo">
+          <div class="photo-mosaic">
+            <div class="photo-cell ph-tall placeholder">
+              <span>🗣</span>
+              <p>Group conversation</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🗣</span>
+              <p>Pueblo Inglés activity</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🗣</span>
+              <p>Programme moment</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🗣</span>
+              <p>Group photo</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🗣</span>
+              <p>Another moment</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MUN -->
+        <div class="life-panel" id="panel-mun">
+          <div class="photo-mosaic">
+            <div class="photo-cell ph-tall placeholder">
+              <span>🌍</span>
+              <p>MUN conference photo</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🌍</span>
+              <p>Speaking at the podium</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🌍</span>
+              <p>Committee session</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🌍</span>
+              <p>Delegates photo</p>
+            </div>
+            <div class="photo-cell placeholder">
+              <span>🌍</span>
+              <p>Another MUN moment</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ── CONTACT ────────────────────────────────────────── -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="contact-grid">
+        <div class="contact-left reveal">
+          <p class="section-label">Get in touch</p>
+          <h2 class="section-title">Let's <em>Work</em><br />Together</h2>
+          <p>Open to freelance video and design projects, collaborations, and interesting conversations.</p>
+          <div class="contact-links">
+            <a class="contact-link" href="mailto:denizafsar1@outlook.com">
+              <div class="cl-icon">✉</div>
+              <div class="cl-text">
+                <span class="cl-label">Email</span>
+                <span class="cl-value">denizafsar1@outlook.com</span>
+              </div>
+              <span class="cl-arrow">↗</span>
+            </a>
+            <a class="contact-link" href="https://wa.me/34647572987" target="_blank">
+              <div class="cl-icon">💬</div>
+              <div class="cl-text">
+                <span class="cl-label">WhatsApp</span>
+                <span class="cl-value">+34 647 57 29 87</span>
+              </div>
+              <span class="cl-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+        <div class="contact-right">
+          <div class="contact-monogram">DA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────── -->
+  <footer>
+    <p>© 2025 <span>Deniz Afsar</span>. All rights reserved.</p>
+    <p>Built with ♡ — hosted on <span>GitHub Pages</span></p>
+  </footer>
+
+  <!-- ── SCRIPTS ────────────────────────────────────────── -->
+  <script>
+    /* Custom cursor */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    document.addEventListener('mousemove', e => {
+      dot.style.left  = e.clientX + 'px';
+      dot.style.top   = e.clientY + 'px';
+      ring.style.left = e.clientX + 'px';
+      ring.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button, .p-item').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
+    });
+
+    /* Reveal on scroll */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* Portfolio filter */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.p-item').forEach(item => {
+          if (f === 'all' || item.dataset.type === f) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    /* Life tabs */
+    document.querySelectorAll('.life-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.life-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.life-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* Portfolio item click — open YouTube in new tab */
+    document.querySelectorAll('.p-item[data-type="video"]').forEach(item => {
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', () => {
+        const iframe = item.querySelector('iframe');
+        if (iframe) {
+          const src = iframe.src.replace('embed/', 'watch?v=').replace('?autoplay=0&mute=1', '');
+          window.open(src, '_blank');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
